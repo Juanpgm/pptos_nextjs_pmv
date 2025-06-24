@@ -1,0 +1,323 @@
+/* The following @tailwind directives require Tailwind CSS/PostCSS processing.
+   If you see an "Unknown at rule @tailwind" error, make sure your build setup includes Tailwind CSS.
+   Do not open this CSS file directly in the browser. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Importa las paletas de colores para el tema oscuro de Radix UI */
+@import "@radix-ui/colors/black-alpha.css";
+@import "@radix-ui/colors/mauve-dark.css";
+@import "@radix-ui/colors/violet-dark.css";
+@import "@radix-ui/colors/green-dark.css";
+@import "@radix-ui/colors/red-dark.css";
+
+/* Reseteo básico */
+button, fieldset, input, select {
+    all: unset;
+    box-sizing: border-box;
+}
+
+/* Actualización de la paleta de colores a tonos azules */
+:root {
+  /* Nueva paleta de colores azul */
+  --color-dark-blue: #001d3a;    /* Azul marino oscuro */
+  --color-blue: #003f6a;         /* Azul medio */
+  --color-medium-blue: #006da4;  /* Azul claro */
+  --color-bright-blue: #00a7e3;  /* Azul brillante */
+  --color-light-blue: #00eeff;   /* Cian brillante */
+  
+  /* Colores adicionales para la interfaz */
+  --color-white: #ffffff;
+  --color-off-white: #f8fdff;    /* Blanco con tinte azul */
+  --color-light-bg: #e6f7ff;     /* Fondo celeste muy claro */
+  
+  /* Mapeo con colores funcionales para facilitar su uso */
+  --color-bg-primary: var(--color-off-white);
+  --color-bg-secondary: var(--color-light-bg);
+  --color-bg-accent: var(--color-bright-blue);
+  --color-bg-dark: var(--color-dark-blue);
+  --color-text-primary: var(--color-dark-blue);
+  --color-text-secondary: var(--color-blue);
+  --color-text-light: var(--color-white);
+  --color-border: var(--color-medium-blue);
+  --color-selected: rgba(0, 167, 227, 0.1); /* Bright blue con transparencia */
+  --color-selected-hover: rgba(0, 167, 227, 0.2); /* Versión más oscura */
+  --color-button-primary: var(--color-medium-blue);
+  --color-button-hover: var(--color-blue);
+  
+  /* Colores adicionales que combinan con la paleta */
+  --color-success: #00a478; /* Verde azulado que combina con la paleta */
+  --color-error: #e35066;   /* Rojo que contrasta bien con azules */
+}
+
+/* Estilos base del cuerpo de la página - actualizado con la nueva paleta */
+body {
+  background-color: var(--color-bg-primary); /* Fondo principal claro */
+  color: var(--color-text-primary); /* Texto principal oscuro */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* === MODAL DIALOGO EMERGENTE === */
+
+/* Capa de fondo que oscurece la pantalla */
+.DialogOverlay {
+  background-color: rgba(0, 29, 58, 0.25); /* Fondo basado en dark-blue */
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: overlayShow 200ms ease-out;
+  backdrop-filter: blur(4px);
+}
+
+/* Contenido del diálogo por encima del overlay */
+.DialogContent {
+  background-color: var(--color-off-white) !important;
+  border: 1px solid var(--color-bright-blue);
+  border-radius: 12px;
+  box-shadow:
+    0 10px 38px -10px rgba(0, 29, 58, 0.25),
+    0 10px 20px -15px rgba(0, 29, 58, 0.15);
+  position: relative;
+  width: 90vw;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 51;
+  animation: contentShow 200ms ease-out;
+  padding: 0;
+  outline: none;
+}
+
+/* Título del diálogo */
+.DialogTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-dark-blue);
+  margin: 0;
+}
+
+/* Botón de cerrar (icono circular) */
+.IconButton {
+  color: var(--color-medium-blue);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.IconButton:hover {
+  background-color: rgba(0, 167, 227, 0.15);
+  color: var(--color-dark-blue);
+}
+.IconButton:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-medium-blue);
+}
+
+/* Cabecera del diálogo */
+.DialogContent .p-6.border-b {
+  background-color: var(--color-light-bg); /* Cabecera con tono celeste claro */
+  border-bottom: 1px solid var(--color-bright-blue);
+  padding: 16px 20px; /* Más padding */
+  opacity: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Estilo para el contenedor de la tabla dentro del diálogo */
+.DialogContent .p-6.flex-grow {
+  background-color: var(--color-off-white); /* Fondo claro */
+  padding: 24px; /* Más padding */
+  opacity: 1;
+}
+
+/* --- Estilos de Componentes (Botones, Inputs) --- */
+
+.Button {
+  background-color: var(--color-button-primary);
+  color: var(--color-white);
+}
+.Button:focus-visible { outline: 2px solid var(--color-bright-blue); outline-offset: 2px; }
+.Button:disabled { background-color: rgba(0, 167, 227, 0.4); color: rgba(255, 255, 255, 0.8); cursor: not-allowed; }
+.Button:hover { background-color: var(--color-button-hover); }
+
+.Button.green {
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.Button.red {
+  background-color: var(--color-error);
+  color: var(--color-white);
+}
+
+.Button.violet {
+  background-color: var(--color-bright-blue);
+  color: var(--color-white);
+}
+
+.Button.green:hover { background-color: #009468; } /* Versión más oscura */
+.Button.red:hover { background-color: #d34056; } /* Versión más oscura */
+.Button.violet:hover { background-color: #0095cc; } /* Versión más oscura del bright-blue */
+
+.IconButton {
+    font-family: inherit;
+    border-radius: 100%;
+    height: 35px;
+    width: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-medium-blue);
+    cursor: pointer;
+    transition: background-color 150ms ease;
+}
+.IconButton:hover { background-color: rgba(0, 167, 227, 0.15); color: var(--color-dark-blue); }
+.IconButton:focus-visible { box-shadow: 0 0 0 2px var(--color-medium-blue); }
+
+.Input {
+  color: var(--color-dark-blue);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-medium-blue);
+}
+.Input:focus { border-color: var(--color-bright-blue); box-shadow: 0 0 0 1px var(--color-bright-blue); }
+
+/* === ESTILOS PARA ITEMS TABLE === */
+/* Contenedor específico para ItemTable */
+.item-table-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 52; /* Por encima del overlay */
+  pointer-events: none; /* No interfiere con la interacción */
+}
+
+.item-table-container > div {
+  pointer-events: auto; /* Habilita la interacción en la tabla */
+  width: 100%;
+  max-width: 1200px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background-color: var(--color-off-white);
+  border: 1px solid var(--color-medium-blue);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 29, 58, 0.12),
+              0 10px 10px -5px rgba(0, 29, 58, 0.08);
+}
+
+/* Fondo para la tabla */
+.ItemTable {
+  background-color: var(--color-off-white);
+  color: var(--color-dark-blue);
+}
+
+/* Ajuste para el encabezado */
+.bg-mauve-4.sticky.top-0.z-10,
+.bg-mauve-4.p-4.border-b {
+  background-color: var(--color-light-bg) !important;
+  border-bottom: 1px solid rgba(0, 167, 227, 0.3) !important;
+  color: var(--color-dark-blue);
+  box-shadow: 0 2px 4px rgba(0, 29, 58, 0.08);
+  padding: 0;
+  opacity: 1 !important;
+}
+
+/* Para el título de la tabla */
+.text-lg.font-semibold.text-mauve-12.text-center {
+  color: var(--color-dark-blue) !important;
+}
+
+/* Celdas con fondo personalizado */
+.ItemTable td {
+  background-color: var(--color-off-white) !important;
+  padding: 12px;
+  opacity: 1 !important;
+}
+
+/* Ajustar filas seleccionadas para que destaquen en el fondo */
+.ItemTable tr.bg-violet-4 td,
+.ItemTable tr.bg-violet-4 th,
+.ItemTable tr.bg-violet-5 td,
+.ItemTable tr.bg-violet-5 th {
+  background-color: var(--color-selected) !important;
+  color: var(--color-dark-blue);
+}
+
+/* Hover de filas */
+.ItemTable tr:hover td {
+  background-color: var(--color-selected-hover) !important;
+}
+
+/* Botones de acción en la tabla */
+button.bg-violet-9, 
+button.bg-violet-9:enabled:hover {
+  background-color: var(--color-button-primary) !important;
+  color: var(--color-white) !important;
+}
+
+button.bg-violet-9:enabled:hover {
+  background-color: var(--color-button-hover) !important;
+}
+
+button.bg-violet-9:disabled {
+  background-color: rgba(0, 167, 227, 0.4) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  opacity: 0.7;
+}
+
+/* Controles de paginación */
+button.border-mauve-6 {
+  border-color: var(--color-medium-blue) !important;
+  color: var(--color-blue) !important;
+}
+
+button.border-mauve-6:hover:not(:disabled) {
+  background-color: var(--color-light-bg) !important;
+  color: var(--color-dark-blue) !important;
+}
+
+/* Textos informativos */
+.text-mauve-11, .text-sm.text-mauve-11 {
+  color: var(--color-blue) !important;
+}
+
+/* Animaciones */
+@keyframes overlayShow {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Añadir estos estilos al final del archivo */
+
+/* Estilo para los títulos de capítulos en negrita */
+.budget-chapter-title {
+  font-weight: 700 !important; /* Bold */
+  color: var(--color-dark-blue) !important;
+}
+
+/* Estilo para el campo de texto de nuevo capítulo cuando tiene foco */
+.new-chapter-input:focus {
+  box-shadow: 0 0 0 2px var(--color-bright-blue);
+  border-color: var(--color-bright-blue);
+}
