@@ -1,45 +1,82 @@
-// filepath: src/pages/api/items.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
 import path from 'path';
 import { promises as fs } from 'fs';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 50;
-  const searchTerm = (req.query.search as string || '').toLowerCase();
-  const categoriesQuery = req.query.category as string || '';
+// Definir un tipo para la estructura de un item para mayor seguridad
+type Item = {
+  CODIGO: string;
+  DESCRIPCION: string;
+  UNIDAD: string;
+  VALOR: number;
+  CAPITULO: string;
+};
 
+// Definir un tipo para la respuesta de la API
+type ApiResponse = {
+  items: Item[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponse | { message: string }>
+) {
   try {
+    // Construir la ruta completa al archivo JSON
     const jsonDirectory = path.join(process.cwd(), 'data');
     const fileContents = await fs.readFile(path.join(jsonDirectory, 'items.json'), 'utf8');
-    let items = JSON.parse(fileContents);
+    const allItems: Item[] = JSON.parse(fileContents);
 
-    const selectedCategories = categoriesQuery ? categoriesQuery.split(',') : [];
-    
-    // Si "Todos" está en la lista o la lista está vacía, no filtramos por categoría.
-    // Filtramos solo si hay categorías específicas seleccionadas.
-    if (selectedCategories.length > 0 && !selectedCategories.includes('Todos')) {
-      items = items.filter((item: any) => selectedCategories.includes(item.CAPITULO));
+    // Obtener parámetros de la query
+    const {
+      limit = '10',
+      page = '1',
+      search = '',
+      category = 'Todos',
+    } = req.query;
+
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    const searchTerm = (search as string).toLowerCase();
+
+    // Filtrar items basado en categoría y término de búsqueda
+    let filteredItems = allItems;
+
+    if (category && category !== 'Todos' && category !== 'Filtrar por Grupo de APU') {
+      filteredItems = filteredItems.filter(
+        (item) => item.CAPITULO === category
+      );
     }
-    
+
     if (searchTerm) {
-      items = items.filter((item: any) => item.DESCRIPCION.toLowerCase().includes(searchTerm));
+      filteredItems = filteredItems.filter(
+        (item) =>
+          item.CODIGO.toLowerCase().includes(searchTerm) ||
+          item.DESCRIPCION.toLowerCase().includes(searchTerm) ||
+          item.UNIDAD.toLowerCase().includes(searchTerm)
+      );
     }
 
-    const totalItems = items.length;
-    const totalPages = Math.ceil(totalItems / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
+    const totalItems = filteredItems.length;
+    const totalPages = Math.ceil(totalItems / limitNum);
 
-    const paginatedItems = items.slice(startIndex, endIndex);
+    // Paginar los resultados
+    const paginatedItems = filteredItems.slice(
+      (pageNum - 1) * limitNum,
+      pageNum * limitNum
+    );
 
+    // Enviar la respuesta exitosa
     res.status(200).json({
       items: paginatedItems,
       totalItems,
       totalPages,
-      currentPage: page,
+      currentPage: pageNum,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error al leer los datos' });
+    console.error(error);
+    res.status(500).json({ message: 'Error al leer el archivo de datos' });
   }
 }
